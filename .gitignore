@@ -1,6 +1,7 @@
 *.class
 *.log
 target
+project
 .DS_Store
 .idea
 metastore_db
