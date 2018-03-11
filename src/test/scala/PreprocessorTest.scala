@@ -2,10 +2,10 @@ import org.scalatest.{FunSuite, Matchers}
 
 class PreprocessorTest extends FunSuite
   with Matchers
-  with SparkSessionTestWrapper {
+  with SparkTestWrapper {
 
   test("Read id pairs text file, reverse order and give dataset"){
-    val result = Preprocessor.getDatasetFromText("src/test/samples/sampledata.txt", spark).collect()
+    val result = Preprocessor.getDatasetFromText("src/test/samples/sampledata.txt", sc).collect()
     result.length should equal(6)
     result should contain ("30", "50")
     result should contain ("60", "30")
@@ -16,12 +16,11 @@ class PreprocessorTest extends FunSuite
   }
 
   test("Get dataset of User objects from id pairs of following connections"){
-    import spark.implicits._
-    val idPairs = Seq(("30", "50"), ("60", "30"), ("70", "60"), ("70", "50"), ("60", "50"), ("70", "30")).toDS()
+    val idPairs = sc.parallelize(Seq(("30", "50"), ("60", "30"), ("70", "60"), ("70", "50"), ("60", "50"), ("70", "30")))
 
-    val ds = Preprocessor.getUsersFromPairs(idPairs, spark)
+    val rdd = Preprocessor.getUsersFromPairs(idPairs, sc)
 
-    val result = ds.rdd.collect().sortBy(_.id)
+    val result = rdd.collect().sortBy(_.id)
 
     result.length should equal(3)
     result(0).id should equal("30")

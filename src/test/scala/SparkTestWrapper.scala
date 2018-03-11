@@ -1,6 +1,7 @@
+import org.apache.spark.SparkContext
 import org.apache.spark.sql.SparkSession
 
-trait SparkSessionTestWrapper {
+trait SparkTestWrapper {
 
   lazy val spark: SparkSession = {
     SparkSession
@@ -9,5 +10,7 @@ trait SparkSessionTestWrapper {
       .appName("Spark Test")
       .getOrCreate()
   }
+
+  lazy val sc: SparkContext = spark.sparkContext
 
 }

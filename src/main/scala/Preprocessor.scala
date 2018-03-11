@@ -1,18 +1,17 @@
-import org.apache.spark.sql.{Dataset, SparkSession}
+import org.apache.spark.SparkContext
+import org.apache.spark.rdd.RDD
 
 import scala.collection.mutable
 
 object Preprocessor {
 
-  def readTextFile(filename: String, spark: SparkSession): Dataset[Node] ={
-    val idPairs = getDatasetFromText(filename, spark)
-    getUsersFromPairs(idPairs, spark)
+  def readTextFile(filename: String, sc: SparkContext): RDD[Node] ={
+    val idPairs = getDatasetFromText(filename, sc)
+    getUsersFromPairs(idPairs, sc)
   }
 
-  def getDatasetFromText(filename: String, spark: SparkSession): Dataset[(String, String)] ={
-    import spark.implicits._
-
-    val rawData = spark.read.text(filename).as[String]
+  def getDatasetFromText(filename: String, sc: SparkContext): RDD[(String, String)] ={
+    val rawData = sc.textFile(filename)
 
     // Revert the ordering as the data is in "a follows b" format but we want "b followed by a"
     rawData.map(value => value.split(" "))
@@ -21,13 +20,12 @@ object Preprocessor {
       }
   }
 
-  def getUsersFromPairs(idPairs: Dataset[(String, String)], spark: SparkSession): Dataset[Node] ={
-    import spark.implicits._
+  def getUsersFromPairs(idPairs: RDD[(String, String)], sc: SparkContext): RDD[Node] ={
 
-    idPairs.groupByKey(_._1)
-      .mapGroups{ case (key, values) =>
-        val tempMap = new mutable.HashMap[String, Int]
-        values.foreach{ case (_, value) =>
+    idPairs.groupByKey()
+      .map { case (key, values) =>
+        val tempMap = mutable.Map.empty[String, Int]
+        values.foreach{ value =>
           if (tempMap.contains(value)){
             tempMap.put(value, tempMap(value)+1)
           }
