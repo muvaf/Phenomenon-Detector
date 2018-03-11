@@ -4,7 +4,7 @@ import scala.collection.mutable
 
 object Preprocessor {
 
-  def readTextFile(filename: String, spark: SparkSession): Dataset[User] ={
+  def readTextFile(filename: String, spark: SparkSession): Dataset[Node] ={
     val idPairs = getDatasetFromText(filename, spark)
     getUsersFromPairs(idPairs, spark)
   }
@@ -21,7 +21,7 @@ object Preprocessor {
       }
   }
 
-  def getUsersFromPairs(idPairs: Dataset[(String, String)], spark: SparkSession): Dataset[User] ={
+  def getUsersFromPairs(idPairs: Dataset[(String, String)], spark: SparkSession): Dataset[Node] ={
     import spark.implicits._
 
     idPairs.groupByKey(_._1)
@@ -35,7 +35,7 @@ object Preprocessor {
             tempMap.put(value, 1)
           }
         }
-        User(key, tempMap.toMap)
+        Node(key, tempMap.toMap)
       }
   }
 
