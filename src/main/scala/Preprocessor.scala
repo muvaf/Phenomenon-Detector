@@ -26,16 +26,16 @@ object Preprocessor {
 
     idPairs.groupByKey(_._1)
       .mapGroups{ case (key, values) =>
-        val newNode = User(key, new mutable.HashMap[String, Int])
+        val tempMap = new mutable.HashMap[String, Int]
         values.foreach{ case (_, value) =>
-          if (newNode.followingList.contains(value)){
-            newNode.followingList.put(value, newNode.followingList(value)+1)
+          if (tempMap.contains(value)){
+            tempMap.put(value, tempMap(value)+1)
           }
           else {
-            newNode.followingList.put(value, 1)
+            tempMap.put(value, 1)
           }
         }
-        newNode
+        User(key, tempMap.toMap)
       }
   }
 
