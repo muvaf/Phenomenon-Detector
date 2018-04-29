@@ -1,3 +1,4 @@
+import org.apache.spark.sql.Row
 import org.scalatest.{FunSuite, Matchers}
 
 class NodeTest extends FunSuite
@@ -38,5 +39,18 @@ class NodeTest extends FunSuite
     unifiedNode.followers("50") should equal(1)
     unifiedNode.followers("60") should equal(1)
     unifiedNode.followers("70") should equal(1)
+  }
+
+  test("Serializes Dataframe Row into Node") {
+//    import spark.implicits._
+//    val colNames = Seq("aid", "afollowers", "asubnodes", "bid", "bfollowers", "bsubnodes")
+//    val df = List(
+//      Row("someid", Map[String, Int]("otherid" -> 0, "otherid2" -> 1), Option(Set[String]("otherid3"))),
+//      Row("someid", Map[String, Int]("otherid" -> 0, "otherid2" -> 1), Option(Set[String]("otherid3"))),
+//      Row("someid", Map[String, Int]("otherid" -> 0, "otherid2" -> 1), Option(Set[String]("otherid3")))
+//    ).toDF()
+//
+//    df.show()
+
   }
 }
