@@ -31,12 +31,12 @@ class NodeTest extends FunSuite
 
     val unifiedNode = Node.unifyNodes(aNode, bNode, intersectionSet)
 
-    unifiedNode.followingList.size should equal(6)
-    unifiedNode.followingList("30") should equal(3)
-    unifiedNode.followingList("100") should equal(6)
-    unifiedNode.followingList("40") should equal(1)
-    unifiedNode.followingList("50") should equal(1)
-    unifiedNode.followingList("60") should equal(1)
-    unifiedNode.followingList("70") should equal(1)
+    unifiedNode.followers.size should equal(6)
+    unifiedNode.followers("30") should equal(3)
+    unifiedNode.followers("100") should equal(6)
+    unifiedNode.followers("40") should equal(1)
+    unifiedNode.followers("50") should equal(1)
+    unifiedNode.followers("60") should equal(1)
+    unifiedNode.followers("70") should equal(1)
   }
 }

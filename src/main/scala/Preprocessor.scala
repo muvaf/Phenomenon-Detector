@@ -30,7 +30,7 @@ object Preprocessor {
             tempMap.put(value, tempMap(value)+1)
           }
           else {
-            tempMap.put(value, 1)
+            tempMap.put(value, 0)
           }
         }
         Node(key, tempMap.toMap)
