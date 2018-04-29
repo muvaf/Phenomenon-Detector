@@ -1,6 +1,8 @@
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
+
 import scala.collection.mutable
 
-case class Node(id: String, followers: Map[String, Int] = null, subNodes: Option[Set[String]] = None)
+case class Node(id: String, followers: Map[String, Int] = Map.empty, subNodes: Seq[String] = Seq.empty)
 
 object Node {
 
@@ -13,17 +15,17 @@ object Node {
     val tempIntersection = mutable.Map.empty[String, Int]
 
     intersectionSet.foreach { case (id: String) =>
-      val aCount = a.followers.getOrElse(id, 0)
-      val bCount = b.followers.getOrElse(id, 0)
+      // id's are guaranteed to exist since we're iterating over the intersection
+      val aCount = a.followers(id)
+      val bCount = b.followers(id)
 
       tempIntersection.put(id, aCount + bCount + 1)
     }
     Node(
       a.id,
       a.followers ++ b.followers ++ tempIntersection,
-      Option(
-        Set(b.id, a.id) ++ a.subNodes.getOrElse(Set.empty) ++ b.subNodes.getOrElse(Set.empty)
-      ))
+      Array(b.id, a.id) ++ a.subNodes ++ b.subNodes
+      )
   }
 
   def getIntersectionSet(a: Node, b: Node): Set[String] ={
@@ -46,6 +48,14 @@ object Node {
     node.followers.foreach{ (follower) =>
       println(follower._1 + " -> " + follower._2)
     }
+  }
+
+  def getNodePairFromRow(row: Row, spark: SparkSession): (Node, Node)={
+      (
+        Node(row.getAs[String](0), row.getAs[Map[String, Int]](1), row.getAs[Seq[String]](2)),
+        Node(row.getAs[String](3), row.getAs[Map[String, Int]](4), row.getAs[Seq[String]](5))
+      )
+
   }
 
 }

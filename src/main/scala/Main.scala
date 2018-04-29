@@ -3,15 +3,16 @@ import org.apache.spark.sql.SparkSession
 object Main {
   def main(args: Array[String]) {
 
-    val spark = SparkSession.builder.appName("Simple Application").master("local[*]").getOrCreate()
+    val spark = SparkSession.builder.appName("Phenomenon Detector").master("local[*]").getOrCreate()
     val sc = spark.sparkContext
+    import spark.implicits._
 
-    val allNodes = Preprocessor.readTextFile("twitter_combined.txt", sc)
+    val allNodes = Preprocessor.readTextFile("twitter_combined.txt", sc).toDS()
+    val seedNode = DiscoveryEngine.extractSeedNode(allNodes, 20, spark)
 
-    val bestNode = DiscoveryEngine.extractBestNode(allNodes, 1)
-    println("Score: " + bestNode._2)
-    Node.print(bestNode._1)
-
+    val threeMerged = DiscoveryEngine.extractBestMergedNode(seedNode._1, allNodes, spark)
+    println("Score: " + threeMerged._2)
+    Node.print(threeMerged._1)
     spark.stop()
   }
 }
