@@ -24,22 +24,22 @@ class PreprocessorTest extends FunSuite
 
     result.length should equal(3)
     result(0).id should equal("30")
-    result(0).followingList.keySet should contain("50")
-    result(0).followingList("50") should equal(1)
+    result(0).followers.keySet should contain("50")
+    result(0).followers("50") should equal(0)
 
     result(1).id should equal("60")
-    result(1).followingList.keySet should contain("30")
-    result(1).followingList.keySet should contain("50")
-    result(1).followingList("30") should equal(1)
-    result(1).followingList("50") should equal(1)
+    result(1).followers.keySet should contain("30")
+    result(1).followers.keySet should contain("50")
+    result(1).followers("30") should equal(0)
+    result(1).followers("50") should equal(0)
 
     result(2).id should equal("70")
-    result(2).followingList.keySet should contain("30")
-    result(2).followingList.keySet should contain("50")
-    result(2).followingList.keySet should contain("60")
-    result(2).followingList("30") should equal(1)
-    result(2).followingList("50") should equal(1)
-    result(2).followingList("60") should equal(1)
+    result(2).followers.keySet should contain("30")
+    result(2).followers.keySet should contain("50")
+    result(2).followers.keySet should contain("60")
+    result(2).followers("30") should equal(0)
+    result(2).followers("50") should equal(0)
+    result(2).followers("60") should equal(0)
 
   }
 
