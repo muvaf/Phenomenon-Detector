@@ -24,7 +24,7 @@ object Node {
     Node(
       a.id,
       a.followers ++ b.followers ++ tempIntersection,
-      Array(b.id, a.id) ++ a.subNodes ++ b.subNodes
+      Array(b.id) ++ a.subNodes
       )
   }
 
@@ -42,6 +42,8 @@ object Node {
 
   def print(node: Node): Unit ={
     println("ID: " + node.id)
+    println("Coverage: " + node.followers.size)
+    println("Sum of Intersections: " + node.followers.values.sum)
     println("Subnodes:")
     node.subNodes.foreach(println)
     println("Followers:")

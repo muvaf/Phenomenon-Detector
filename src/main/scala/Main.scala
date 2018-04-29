@@ -8,11 +8,15 @@ object Main {
     import spark.implicits._
 
     val allNodes = Preprocessor.readTextFile("twitter_combined.txt", sc).toDS()
-    val seedNode = DiscoveryEngine.extractSeedNode(allNodes, 20, spark)
+    var seedNode = DiscoveryEngine.extractSeedNode(allNodes, 20, spark)
 
-    val threeMerged = DiscoveryEngine.extractBestMergedNode(seedNode._1, allNodes, spark)
-    println("Score: " + threeMerged._2)
-    Node.print(threeMerged._1)
+    val maxNumOfNodes = 10
+    var i = 0
+    for ( i <- 1 until maxNumOfNodes){
+      seedNode = DiscoveryEngine.extractBestMergedNode(seedNode._1, allNodes, spark)
+    }
+    println("Score: " + seedNode._2)
+    Node.print(seedNode._1)
     spark.stop()
   }
 }
