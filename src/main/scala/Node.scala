@@ -17,7 +17,8 @@ object Node {
     intersectionSet.foreach { case (id: String) =>
       // id's are guaranteed to exist since we're iterating over the intersection
       val aIntersectionList = a.followers(id)
-
+      // b assumed to have followers with no intersection data because we go one way, so only a has intersection data
+      // belonging to its followers
       tempIntersection.put(id, aIntersectionList ++ Seq(b.id))
     }
     Node(
@@ -28,15 +29,15 @@ object Node {
   }
 
   def getIntersectionSet(a: Node, b: Node): Set[String] ={
-    val unifiedMap = a.followers ++ b.followers
+    val unifiedMap = a.followers.keySet ++ b.followers.keySet
 
-    val onlyNonIntersectedB = b.followers -- a.followers.keySet
-    val onlyNonIntersectedA = a.followers -- b.followers.keySet
+    val onlyNonIntersectedB = b.followers.keySet -- a.followers.keySet
+    val onlyNonIntersectedA = a.followers.keySet -- b.followers.keySet
 
-    val aExcluded = unifiedMap -- onlyNonIntersectedA.keySet
-    val allExcluded = aExcluded -- onlyNonIntersectedB.keySet
+    val aExcluded = unifiedMap -- onlyNonIntersectedA
+    val allExcluded = aExcluded -- onlyNonIntersectedB
 
-    allExcluded.keySet
+    allExcluded
   }
 
   def print(node: Node): Unit ={
@@ -44,7 +45,11 @@ object Node {
     println("Coverage: " + node.followers.size)
     println("Subnodes:")
     node.subNodes.foreach(println)
-    node.followers.values.foreach(_.foreach(intersectNode => println("Intersects:" + intersectNode)))
+    node.followers.foreach{ case (id, intersectSequence) =>
+      if (intersectSequence.nonEmpty) {
+        println("inter: " + id + " " + intersectSequence.reduce(_ + "," + _))
+      }
+    }
 //    println("Followers:")
 //    node.followers.foreach{ (follower) =>
 //      println(follower._1 + " -> " + follower._2)

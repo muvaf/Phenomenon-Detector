@@ -3,7 +3,7 @@ import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 object DiscoveryEngine {
 
-  def extractSeedNode(allNodes: Dataset[Node], numberOfNodes: Int, spark: SparkSession): (Node, Int) ={
+  def extractSeedNode(allNodes: Dataset[Node], numberOfNodes: Int, spark: SparkSession): (Node, Double) ={
     import spark.implicits._
 
     val bestNodes = spark.createDataFrame(
@@ -22,7 +22,7 @@ object DiscoveryEngine {
     getMaxScoredNode(scores)
   }
 
-  def extractBestMergedNode(seedNode: Node, allNodes: Dataset[Node], spark: SparkSession): (Node, Int) ={
+  def extractBestMergedNode(seedNode: Node, allNodes: Dataset[Node], spark: SparkSession): (Node, Double) ={
     import spark.implicits._
     val scores = allNodes.map{ (otherNode) =>
       getMergerScore(seedNode, otherNode)
@@ -30,10 +30,10 @@ object DiscoveryEngine {
     getMaxScoredNode(scores)
   }
 
-  private def getMergerScore(aNode: Node, bNode: Node): (Node, Int)={
+  def getMergerScore(aNode: Node, bNode: Node): (Node, Double)={
     val mergedNode = Node.mergeNodes(aNode, bNode)
-    val degreeOfIntersection = mergedNode.followers.values.map(_.size).sum
-    val degreeOfCoverage = mergedNode.followers.size
+    val degreeOfIntersection = mergedNode.followers.values.map(_.size).sum.toDouble
+    val degreeOfCoverage = mergedNode.followers.size.toDouble
 
     if (degreeOfIntersection == 0){
       (mergedNode, degreeOfCoverage * degreeOfCoverage / 1)
@@ -43,10 +43,10 @@ object DiscoveryEngine {
     }
   }
 
-  private def getMaxScoredNode(scores: Dataset[(Node,Int)]): (Node, Int)={
-    scores.rdd.max()(new Ordering[Tuple2[Node, Int]]() {
-      override def compare(x: (Node, Int), y: (Node, Int)): Int =
-        Ordering[Int].compare(x._2, y._2)
+  private def getMaxScoredNode(scores: Dataset[(Node, Double)]): (Node, Double)={
+    scores.rdd.max()(new Ordering[Tuple2[Node, Double]]() {
+      override def compare(x: (Node, Double), y: (Node, Double)): Int =
+        Ordering[Double].compare(x._2, y._2)
     })
   }
 
