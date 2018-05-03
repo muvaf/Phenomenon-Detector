@@ -25,10 +25,10 @@ object Preprocessor {
 
     idPairs.groupByKey()
       .map { case (key, values) =>
-        val tempMap = mutable.Map.empty[String, Int]
+        val tempMap = mutable.Map.empty[String, Seq[String]]
         values.foreach{ value =>
           // There might be duplicate entries in the data. So, we're handling them here.
-          tempMap.put(value, 0)
+          tempMap.put(value, Seq.empty)
         }
         Node(key, tempMap.toMap)
       }

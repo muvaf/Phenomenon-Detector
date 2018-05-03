@@ -32,7 +32,7 @@ object OutputProcessor {
     val pw = new PrintWriter(new File("output.txt" ))
     pw.println("nodeNum:"+(seedNode.subNodes.size+1).toString+
       ";coverage:"+seedNode.followers.size+
-      ";sumOfIntersections:"+seedNode.followers.values.sum+
+      ";sumOfIntersections:"+seedNode.followers.values.map(_.size).sum+
       ";subNodes:"+seedNode.subNodes.reduce((a, b) => a + "," + b))
     intersectionAmounts.foreach{ pair =>
       pw.println(pair._1._1.id + "," + pair._1._2.id + ":" + pair._2)

@@ -32,7 +32,7 @@ object DiscoveryEngine {
 
   private def getMergerScore(aNode: Node, bNode: Node): (Node, Int)={
     val mergedNode = Node.mergeNodes(aNode, bNode)
-    val degreeOfIntersection = mergedNode.followers.values.sum
+    val degreeOfIntersection = mergedNode.followers.values.map(_.size).sum
     val degreeOfCoverage = mergedNode.followers.size
 
     if (degreeOfIntersection == 0){
