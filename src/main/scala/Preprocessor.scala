@@ -8,7 +8,7 @@ object Preprocessor {
 
   def readTextFile(filename: String, sc: SparkContext): RDD[Node] ={
     val idPairs = getDatasetFromText(filename, sc)
-    getUsersFromPairs(idPairs, sc)
+    getNodesFromPairs(idPairs, sc)
   }
 
   def getDatasetFromText(filename: String, sc: SparkContext): RDD[(String, String)] ={
@@ -21,7 +21,7 @@ object Preprocessor {
       }
   }
 
-  def getUsersFromPairs(idPairs: RDD[(String, String)], sc: SparkContext): RDD[Node] ={
+  def getNodesFromPairs(idPairs: RDD[(String, String)], sc: SparkContext): RDD[Node] ={
 
     idPairs.groupByKey()
       .map { case (key, values) =>

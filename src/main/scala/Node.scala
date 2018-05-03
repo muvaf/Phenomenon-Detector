@@ -46,10 +46,10 @@ object Node {
     println("Sum of Intersections: " + node.followers.values.sum)
     println("Subnodes:")
     node.subNodes.foreach(println)
-    println("Followers:")
-    node.followers.foreach{ (follower) =>
-      println(follower._1 + " -> " + follower._2)
-    }
+//    println("Followers:")
+//    node.followers.foreach{ (follower) =>
+//      println(follower._1 + " -> " + follower._2)
+//    }
   }
 
   def getNodePairFromRow(row: Row, spark: SparkSession): (Node, Node)={

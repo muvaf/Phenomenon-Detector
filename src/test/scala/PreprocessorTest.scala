@@ -18,7 +18,7 @@ class PreprocessorTest extends FunSuite
   test("Get dataset of User objects from id pairs of following connections"){
     val idPairs = sc.parallelize(Seq(("30", "50"), ("60", "30"), ("70", "60"), ("70", "50"), ("60", "50"), ("70", "30")))
 
-    val rdd = Preprocessor.getUsersFromPairs(idPairs, sc)
+    val rdd = Preprocessor.getNodesFromPairs(idPairs, sc)
 
     val result = rdd.collect().sortBy(_.id)
 
