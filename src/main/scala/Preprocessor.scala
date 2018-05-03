@@ -27,12 +27,8 @@ object Preprocessor {
       .map { case (key, values) =>
         val tempMap = mutable.Map.empty[String, Int]
         values.foreach{ value =>
-          if (tempMap.contains(value)){
-            tempMap.put(value, tempMap(value)+1)
-          }
-          else {
-            tempMap.put(value, 0)
-          }
+          // There might be duplicate entries in the data. So, we're handling them here.
+          tempMap.put(value, 0)
         }
         Node(key, tempMap.toMap)
       }
