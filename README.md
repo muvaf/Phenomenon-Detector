@@ -10,6 +10,9 @@
 `brew install apache-spark`
 
 ## How to run?
+
+`4` in `local[4]` is the core number that you want to allocate to the application.
+
 ```
 sbt package
 spark-submit \
