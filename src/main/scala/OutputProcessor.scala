@@ -28,7 +28,7 @@ object OutputProcessor {
     val summary = "nodeNum:"+(seedNode.subNodes.size+1).toString+
       ";coverage:"+seedNode.followers.size+
       ";sumOfIntersections:"+sumOfIntersections+
-      ";subNodes:"+(seedNode.subNodes++Seq(seedNode.id)).reduce((a, b) => a + "," + b)
+      ";subNodes:"+seedNode.subNodes.reduce((a, b) => a + "," + b)
     pw.println(summary)
     println(summary)
     intersectionAmounts.foreach{ case (group, amount) =>
