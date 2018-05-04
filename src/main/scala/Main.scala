@@ -10,7 +10,7 @@ object Main {
     val allNodes = Preprocessor.readTextFile("twitter_combined.txt", sc).toDS()
     var seedNode = DiscoveryEngine.extractSeedNode(allNodes, 20, spark)
 
-    val maxNumOfNodes = 2
+    val maxNumOfNodes = 10
     var i = 0
     for ( i <- 1 until maxNumOfNodes){
       seedNode = DiscoveryEngine.extractBestMergedNode(seedNode._1, allNodes, spark)
