@@ -32,7 +32,9 @@ object OutputProcessor {
     pw.println(summary)
     println(summary)
     intersectionAmounts.foreach{ case (group, amount) =>
-      val groupString = "[" + group.reduce("\'" + _ + "\',\'" + _ + "\'") + "]"
+      val quotedGroup = group.map("\'" + _ + "\',").reduce(_+_)
+      val fixLastComma = quotedGroup.substring(0, quotedGroup.size-1)
+      val groupString = "[" + fixLastComma + "]"
       pw.println(groupString + "=" + amount.toString)
       println(groupString + "=" + amount.toString)
     }
