@@ -30,7 +30,7 @@ object Preprocessor {
           // There might be duplicate entries in the data. So, we're handling them here.
           tempMap.put(value, Seq(key))
         }
-        Node(key, tempMap.toMap)
+        Node(key, tempMap.toMap, Seq(key))
       }
   }
 
