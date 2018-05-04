@@ -17,15 +17,15 @@ object Node {
     intersectionSet.foreach { case (id: String) =>
       // id's are guaranteed to exist since we're iterating over the intersection
       val aIntersectionList = a.followers(id)
-      // b assumed to have followers with no intersection data because we go one way, so only a has intersection data
-      // belonging to its followers
-      tempIntersection.put(id, aIntersectionList ++ Seq(b.id))
+      val bIntersectionList = b.followers(id)
+
+      tempIntersection.put(id, aIntersectionList ++ bIntersectionList)
     }
     Node(
       a.id,
       a.followers ++ b.followers ++ tempIntersection,
-      Array(b.id) ++ a.subNodes
-      )
+      a.subNodes ++ Array(b.id)
+    )
   }
 
   def getIntersectionSet(a: Node, b: Node): Set[String] ={
@@ -45,15 +45,6 @@ object Node {
     println("Coverage: " + node.followers.size)
     println("Subnodes:")
     node.subNodes.foreach(println)
-    node.followers.foreach{ case (id, intersectSequence) =>
-      if (intersectSequence.nonEmpty) {
-        println("inter: " + id + " " + intersectSequence.reduce(_ + "," + _))
-      }
-    }
-//    println("Followers:")
-//    node.followers.foreach{ (follower) =>
-//      println(follower._1 + " -> " + follower._2)
-//    }
   }
 
   def getNodePairFromRow(row: Row, spark: SparkSession): (Node, Node)={

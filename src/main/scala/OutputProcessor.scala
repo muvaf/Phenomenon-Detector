@@ -1,41 +1,40 @@
 import java.io.{File, PrintWriter}
 
-import net.liftweb.json._
-import net.liftweb.json.Serialization.write
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
-
 import scala.collection.mutable
 
 object OutputProcessor {
 
-  def getListOfPairs(node: Node, mainDatabase: Dataset[Node], spark: SparkSession): Set[(Node, Node)] ={
-    val inclusionList = Set(node.id) ++ node.subNodes
-    val chosenNodes = mainDatabase.filter{ node =>
-      inclusionList.contains(node.id)
+  def getIntersectionAmounts(mainNode: Node): Set[(Seq[String], Int)] ={
+    val intersectionMap = mutable.Map.empty[Set[String], Int]
+    val onlyIntersectedFollowers = mainNode.followers.filter(_._2.nonEmpty)
+
+    val intersectionGroups = onlyIntersectedFollowers.map(Set.empty[String] ++ _._2).toList
+    intersectionGroups.foreach{ group =>
+      if (intersectionMap.contains(group)){
+        intersectionMap.put(group, intersectionMap(group) + 1)
+      }
+      else {
+        intersectionMap.put(group, 1)
+      }
     }
-    val rowList = chosenNodes.crossJoin(chosenNodes)
-      .filter{ row =>
-      !row.get(0).equals(row.get(3))
-      }.collect()
-
-    Set.empty ++ rowList.map(Node.getNodePairFromRow(_, spark))
-  }
-
-  def getIntersectionAmount(pairs: Set[(Node, Node)]): Set[((Node, Node), Int)] ={
-    pairs.map{ case (aNode, bNode) =>
-        val intersectionSet = Node.getIntersectionSet(aNode, bNode)
-      ((aNode, bNode), intersectionSet.size)
+    intersectionMap.keySet.toSet.map{ key: Set[String] =>
+      (key.toSeq, intersectionMap(key))
     }
   }
 
-  def writeToFile(seedNode: Node, intersectionAmounts: Set[((Node, Node), Int)]): Unit ={
+  def writeToFile(seedNode: Node, intersectionAmounts: Set[(Seq[String], Int)]): Unit ={
     val pw = new PrintWriter(new File("output.txt" ))
-    pw.println("nodeNum:"+(seedNode.subNodes.size+1).toString+
+    val sumOfIntersections = seedNode.followers.values.map(_.size).sum - seedNode.followers.size
+    val summary = "nodeNum:"+(seedNode.subNodes.size+1).toString+
       ";coverage:"+seedNode.followers.size+
-      ";sumOfIntersections:"+seedNode.followers.values.map(_.size).sum+
-      ";subNodes:"+seedNode.subNodes.reduce((a, b) => a + "," + b))
-    intersectionAmounts.foreach{ pair =>
-      pw.println(pair._1._1.id + "," + pair._1._2.id + ":" + pair._2)
+      ";sumOfIntersections:"+sumOfIntersections+
+      ";subNodes:"+(seedNode.subNodes++Seq(seedNode.id)).reduce((a, b) => a + "," + b)
+    pw.println(summary)
+    println(summary)
+    intersectionAmounts.foreach{ case (group, amount) =>
+      val groupString = "[" + group.reduce("\'" + _ + "\',\'" + _ + "\'") + "]"
+      pw.println(groupString + "=" + amount.toString)
+      println(groupString + "=" + amount.toString)
     }
     pw.close()
   }
