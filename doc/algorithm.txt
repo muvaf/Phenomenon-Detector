@@ -1,0 +1,45 @@
+Bizim algoritmamizin en kritik noktasi kullanicilari takipci sayilarina gore nasil skorlandiracagimiz. Bu yuzden skor fonksiyonu algoritmanin cekirdegini olusturuyor. 
+
+Skoru etkileyen basilica faktorler:
+-	Follower sayisi
+-	Follower sayisi arttikca artan fiyatin negatif etkisi
+-	Diger kullanicilar ile olan kesisim kumelerinin buyuklugu (ters oranti)
+
+Bu uc faktor arasindan follower sayilarina direk erisebiliyoruz. Ikinci faktor icin elimizde bir fiyat datasi yok. Bu fiyatlandirmadan dogan negatif etkiyi sonradan ekleyecegiz optimizasyon asamasinda. 
+
+Algoritmamiz temel olarak ikili kombinasyonlar uzerinden follower setlerinin kesisim oranina bakacak. Yani A kisisi B kisisi ile yuzde kac kesisime sahip? Bu oran tek basina yeterli degil cunku bizim asil amacimiz en kucuk kesisim ile maksimum kapsamaya ulasmak. Bu setlerin kesisimlerine bakarken daha akillica oldugunu dusundugumuz sekilde, en cok followerlara sahip olanlar ile baslanacak kesistirme ve kesisim oranini hesaplama isine. Ikili kesisim oranlari hesaplaninca bize maksimum kapsamayi kapsadigi alana gore minimum kesisim ile veren ikiliyi bulmus olacagiz. Bu ikiliyi bulmak icin kullanacagimiz formullerden ilki:
+
+
+(Followers_A + FollowersB - Intersection_AB) / Network_Size
+
+
+Bu formul ile ne kadar coverage yarattigimizi hesapliyoruz. Ardindan intersection score olusturuyoruz bu da:
+
+
+(Intersection_AB/Followers_A) * (Intersection_AB/Followers_B)
+
+
+Bu skoru hesapladiktan sonra intersection'u minimize edebilecegiz artik. Yukaridaki iki formulu bir araya getirince de nihai ikili secme formulumuz ortaya cikiyor.
+
+
+[(Followers_A + FollowersB - Intersection_AB) / Network_Size] * [1 -(Intersection_AB/Followers_A) * (Intersection_AB/Followers_B)]
+
+
+Bu ikiliyi elde ettikten sonra artik ikiliyi tek bir kisi olarak sayip tekrar, bu sefer sadece bu kisi icin yukaridaki formulu uygulayarak bir kisi daha seciyoruz. Bu sekilde elimizdeki ikiliden biri surekli Alani cover ettigimiz grup, digeri de gruba almak icin degerlendirdigimiz kullanici olacak.
+
+Ornek:
+
+followerA	followerB	intersectionAB	network_size	intersection_score	primitive_score	final_score
+400			500			100				50000			0,05				0,016			0,0152
+5000		12000		3000			50000			0,15				0,28			0,238
+9000		30000		5000			50000			0,092592593			0,68			0,61703704
+9000		25000		9000			50000			0,36				0,5				0,32
+6000		15000		4563			50000			0,2313441			0,32874			0,25268794
+2523		9421		2123			50000			0,189620695			0,19642			0,1591747
+12301		32340		1591			50000			0,006362971			0,861			0,85552148
+14343		500			399				50000			0,022199122			0,28888			0,28246712
+30210		15000		14000			50000			0,432527861			0,6242			0,35421611
+30000		45000		25000			50000			0,462962963			1				0,53703704
+
+
+Fiyati dahil ederken yapacagimiz sey follower sayisina negative parameter olarak eklemek.
