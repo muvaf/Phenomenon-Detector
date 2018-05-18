@@ -35,9 +35,9 @@ object DiscoveryEngine {
     getScore(mergedNode)
   }
 
-  def getScore(mergedNode: Node): (Node, Double)={
-    val degreeOfIntersection = mergedNode.followers.values.map(_.size).sum.toDouble
+  def getScore(mergedNode: Node): (Node, Double) ={
     val degreeOfCoverage = mergedNode.followers.size.toDouble
+    val degreeOfIntersection = mergedNode.followers.values.map(_.size).sum.toDouble
 
     if (degreeOfIntersection == 0){
       (mergedNode, degreeOfCoverage * degreeOfCoverage / 1)

@@ -31,13 +31,18 @@ object OutputProcessor {
       ";subNodes:"+seedNode.subNodes.reduce((a, b) => a + "," + b)
     pw.println(summary)
     println(summary)
+    pw.println("[")
+    println("[")
     intersectionAmounts.foreach{ case (group, amount) =>
       val quotedGroup = group.map("\'" + _ + "\',").reduce(_+_)
-      val fixLastComma = quotedGroup.substring(0, quotedGroup.size-1)
+      val fixLastComma = quotedGroup.substring(0, quotedGroup.length-1)
       val groupString = "[" + fixLastComma + "]"
-      pw.println(groupString + "=" + amount.toString)
-      println(groupString + "=" + amount.toString)
+      val strToWrite =  "{ sets: " + groupString + ", size: " + amount.toString + " },"
+      pw.println(strToWrite)
+      println(strToWrite)
     }
+    pw.println("];")
+    println("];")
     pw.close()
   }
 
