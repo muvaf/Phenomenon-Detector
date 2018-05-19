@@ -22,10 +22,10 @@ object OutputProcessor {
     }
   }
 
-  def writeToFile(seedNode: Node, intersectionAmounts: Set[(Seq[String], Int)]): Unit ={
-    val pw = new PrintWriter(new File("output.txt" ))
+  def writeToFile(seedNode: Node, intersectionAmounts: Set[(Seq[String], Int)], filename: String): Unit ={
+    val pw = new PrintWriter(new File(filename))
     val sumOfIntersections = seedNode.followers.values.map(_.size).sum - seedNode.followers.size
-    val summary = "nodeNum:"+(seedNode.subNodes.size+1).toString+
+    val summary = "nodeNum:"+seedNode.subNodes.size.toString+
       ";coverage:"+seedNode.followers.size+
       ";sumOfIntersections:"+sumOfIntersections+
       ";subNodes:"+seedNode.subNodes.reduce((a, b) => a + "," + b)
@@ -33,7 +33,8 @@ object OutputProcessor {
     println(summary)
     pw.println("[")
     println("[")
-    intersectionAmounts.foreach{ case (group, amount) =>
+    val sortedIntersectionAmounts = intersectionAmounts.toList.sortBy(_._1.size)
+    sortedIntersectionAmounts.foreach{ case (group, amount) =>
       val quotedGroup = group.map("\'" + _ + "\',").reduce(_+_)
       val fixLastComma = quotedGroup.substring(0, quotedGroup.length-1)
       val groupString = "[" + fixLastComma + "]"
