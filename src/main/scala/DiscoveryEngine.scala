@@ -34,14 +34,14 @@ object DiscoveryEngine {
 
   def getScore(mergedNode: Node): (Node, Double) ={
     val degreeOfCoverage = mergedNode.followers.size.toDouble
-    val degreeOfIntersection = mergedNode.followers.values.map(_.size).sum.toDouble
-//    (mergedNode, degreeOfCoverage)
-    if (degreeOfIntersection == 0){
-      (mergedNode, degreeOfCoverage * degreeOfCoverage / 1)
-    }
-    else {
-      (mergedNode, degreeOfCoverage * degreeOfCoverage / degreeOfIntersection)
-    }
+//    val degreeOfIntersection = mergedNode.followers.values.map(_.size).sum.toDouble
+    (mergedNode, degreeOfCoverage)
+//    if (degreeOfIntersection == 0){
+//      (mergedNode, degreeOfCoverage * degreeOfCoverage / 1)
+//    }
+//    else {
+//      (mergedNode, degreeOfCoverage * degreeOfCoverage / degreeOfIntersection)
+//    }
   }
 
   private def getMaxScoredNode(scores: Dataset[(Node, Double)]): (Node, Double)={
