@@ -7,10 +7,7 @@ object DiscoveryEngine {
     import spark.implicits._
 
     val bestNodes = spark.createDataFrame(
-      allNodes.rdd.takeOrdered(numberOfNodes)(new Ordering[Node]() {
-      override def compare(x: Node, y: Node): Int =
-        Ordering[Int].compare(y.followers.size, x.followers.size)
-    })
+      allNodes.rdd.takeOrdered(numberOfNodes)(Ordering[Int].reverse.on(_.followers.size))
     ).as[Node]
 
     val crossJoinNodes = bestNodes.crossJoin(bestNodes)
@@ -37,21 +34,18 @@ object DiscoveryEngine {
 
   def getScore(mergedNode: Node): (Node, Double) ={
     val degreeOfCoverage = mergedNode.followers.size.toDouble
-//    val degreeOfIntersection = mergedNode.followers.values.map(_.size).sum.toDouble
-    (mergedNode, degreeOfCoverage)
-//    if (degreeOfIntersection == 0){
-//      (mergedNode, degreeOfCoverage * degreeOfCoverage / 1)
-//    }
-//    else {
-//      (mergedNode, degreeOfCoverage * degreeOfCoverage / degreeOfIntersection)
-//    }
+    val degreeOfIntersection = mergedNode.followers.values.map(_.size).sum.toDouble
+//    (mergedNode, degreeOfCoverage)
+    if (degreeOfIntersection == 0){
+      (mergedNode, degreeOfCoverage * degreeOfCoverage / 1)
+    }
+    else {
+      (mergedNode, degreeOfCoverage * degreeOfCoverage / degreeOfIntersection)
+    }
   }
 
   private def getMaxScoredNode(scores: Dataset[(Node, Double)]): (Node, Double)={
-    scores.rdd.max()(new Ordering[Tuple2[Node, Double]]() {
-      override def compare(x: (Node, Double), y: (Node, Double)): Int =
-        Ordering[Double].compare(x._2, y._2)
-    })
+    scores.rdd.max()(Ordering[Double].on(_._2))
   }
 
 }

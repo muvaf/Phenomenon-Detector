@@ -24,10 +24,12 @@ object OutputProcessor {
 
   def writeToFile(seedNode: Node, intersectionAmounts: Set[(Seq[String], Int)], filename: String): Unit ={
     val pw = new PrintWriter(new File(filename))
-    val sumOfIntersections = seedNode.followers.values.map(_.size).sum - seedNode.followers.size
+    val nonUniqueTotalFollowers = seedNode.followers.values.map(_.size).sum
+    val uniqueCoverage = seedNode.followers.size
     val summary = "nodeNum:"+seedNode.subNodes.size.toString+
-      ";coverage:"+seedNode.followers.size+
-      ";sumOfIntersections:"+sumOfIntersections+
+      ";uniqueCoverage:"+uniqueCoverage+
+      ";nonUniqueTotalFollowers:"+nonUniqueTotalFollowers+
+      ";sumOfIntersections:"+(nonUniqueTotalFollowers - uniqueCoverage)+
       ";subNodes:"+seedNode.subNodes.reduce((a, b) => a + "," + b)
     pw.println(summary)
     println(summary)

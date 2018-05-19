@@ -12,32 +12,23 @@ object Node {
   }
 
   def unifyNodes(a: Node, b: Node, intersectionSet: Set[String]): Node ={
-    val tempIntersection = mutable.Map.empty[String, Seq[String]]
-
-    intersectionSet.foreach { case (id: String) =>
+    val intersectionMap = intersectionSet.map { case (id: String) =>
       // id's are guaranteed to exist since we're iterating over the intersection
       val aIntersectionList = a.followers(id)
       val bIntersectionList = b.followers(id)
 
-      tempIntersection.put(id, aIntersectionList ++ bIntersectionList)
-    }
+      id -> (aIntersectionList ++ bIntersectionList)
+    }.toMap
+
     Node(
       a.id,
-      a.followers ++ b.followers ++ tempIntersection,
+      a.followers ++ b.followers ++ intersectionMap,
       a.subNodes ++ Array(b.id)
     )
   }
 
   def getIntersectionSet(a: Node, b: Node): Set[String] ={
-    val unifiedMap = a.followers.keySet ++ b.followers.keySet
-
-    val onlyNonIntersectedB = b.followers.keySet -- a.followers.keySet
-    val onlyNonIntersectedA = a.followers.keySet -- b.followers.keySet
-
-    val aExcluded = unifiedMap -- onlyNonIntersectedA
-    val allExcluded = aExcluded -- onlyNonIntersectedB
-
-    allExcluded
+    a.followers.keySet.intersect(b.followers.keySet)
   }
 
   def print(node: Node): Unit ={
